@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.RecipeMapper">
+
+    <sql id="Base_Column_List">
+        id,name, userId, adminId, steps, description, tags
+    </sql>
+
+    <select id="selectAll" resultType="com.example.entity.Recipe">
+        select
+        <include refid="Base_Column_List" />
+        from recipe
+        <where>
+            <if test="id != null"> and id= #{id}</if>
+            <if test="name != null"> and name like concat('%', #{name}, '%')</if>
+            <if test="ingredients != null"> and ingredients like concat('%', #{ingredients}, '%')</if>
+            <if test="tags != null"> and tags like concat('%', #{tags}, '%')</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.Recipe">
+        select
+        <include refid="Base_Column_List" />
+        from recipe
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from recipe
+        where  id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Recipe" useGeneratedKeys="true">
+        insert into recipe
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">id,</if>
+                <if test="name != null">name,</if>
+                <if test="userId != null">userId,</if>
+                <if test="adminId != null">adminId,</if>
+<!--                <if test="ingredients != null">ingredients,</if>-->
+                <if test="steps != null">steps,</if>
+                <if test="description != null">description,</if>
+                <if test="tags != null">tags,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">#{id},</if>
+                <if test="name != null">#{name},</if>
+                <if test="userId != null">#{userId},</if>
+                <if test="adminId != null">#{adminId},</if>
+<!--                <if test="ingredients != null">#{ingredients},</if>-->
+                <if test="steps != null">#{steps},</if>
+                <if test="description != null">#{description},</if>
+                <if test="tags != null">#{tags},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Recipe">
+        update recipe
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+<!--            <if test="ingredients != null">-->
+<!--                ingredients = #{ingredients},-->
+<!--            </if>-->
+            <if test="steps != null">
+                steps = #{steps},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="tags != null">
+                tags = #{tags},
+            </if>
+        </set>
+        where id = #{id} 
+    </update>
+
+</mapper>
