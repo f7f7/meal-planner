@@ -70,14 +70,12 @@ public class RecipeController {
     }
 
     /**
-     * 查询所有
-     * 此时不显示
+     * select all
+     * including ingredients info
      */
     @GetMapping("/selectAll")
     public Result selectAll(RecipeDTO recipeDTO) {
-        //用select还是convert？？？
-        Recipe recipe = recipeService.selectById(recipeDTO.getId());
-        List<Recipe> list = recipeService.selectAll(recipe);
+        List<RecipeDTO> list = recipeService.selectAll(recipeDTO);
         return Result.success(list);
     }
 
@@ -88,8 +86,8 @@ public class RecipeController {
     public Result selectPage(RecipeDTO recipeDTO,
                              @RequestParam(defaultValue = "1") Integer pageNum,
                              @RequestParam(defaultValue = "10") Integer pageSize) {
-        Recipe recipe = recipeService.convertDtoToRecipe(recipeDTO);
-        PageInfo<Recipe> page = recipeService.selectPage(recipe, pageNum, pageSize);
+//        Recipe recipe = recipeService.convertDtoToRecipe(recipeDTO);
+        PageInfo<RecipeDTO> page = recipeService.selectPage(recipeDTO, pageNum, pageSize);
         return Result.success(page);
     }
 

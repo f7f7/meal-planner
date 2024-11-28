@@ -15,7 +15,7 @@
         <where>
             <if test="id != null"> and id= #{id}</if>
             <if test="name != null"> and name like concat('%', #{name}, '%')</if>
-            <if test="ingredients != null"> and ingredients like concat('%', #{ingredients}, '%')</if>
+<!--            <if test="ingredients != null"> and ingredients like concat('%', #{ingredients}, '%')</if>-->
             <if test="tags != null"> and tags like concat('%', #{tags}, '%')</if>
         </where>
         order by id desc
@@ -33,14 +33,13 @@
         where  id = #{id}
     </delete>
 
-    <insert id="insert" parameterType="com.example.entity.Recipe" useGeneratedKeys="true">
+    <insert id="insert" parameterType="com.example.entity.Recipe" useGeneratedKeys="true" keyProperty="id">
         insert into recipe
         <trim prefix="(" suffix=")" suffixOverrides=",">
                 <if test="id != null">id,</if>
                 <if test="name != null">name,</if>
                 <if test="userId != null">userId,</if>
                 <if test="adminId != null">adminId,</if>
-<!--                <if test="ingredients != null">ingredients,</if>-->
                 <if test="steps != null">steps,</if>
                 <if test="description != null">description,</if>
                 <if test="tags != null">tags,</if>
@@ -50,7 +49,6 @@
                 <if test="name != null">#{name},</if>
                 <if test="userId != null">#{userId},</if>
                 <if test="adminId != null">#{adminId},</if>
-<!--                <if test="ingredients != null">#{ingredients},</if>-->
                 <if test="steps != null">#{steps},</if>
                 <if test="description != null">#{description},</if>
                 <if test="tags != null">#{tags},</if>

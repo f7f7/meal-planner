@@ -40,7 +40,7 @@ public interface RecipeIngredientMapper {
      * update by id
      * (only amount can be updated)
      */
-    @Update("UPDATE recipe_ingredient SET amount = #{amount} WHERE recipe_id = #{recipeId} AND ingredient_id = #{ingredientId}")
+    @Update("UPDATE recipe_ingredient SET amount = #{amount} WHERE recipeId = #{recipeId} AND ingredientId = #{ingredientId}")
     int updateById(@Param("recipeId") Integer recipeId, @Param("ingredientId") Integer ingredientId, @Param("amount") Integer amount);
 
 
@@ -63,7 +63,7 @@ public interface RecipeIngredientMapper {
      */
     @Select("SELECT i.id, i.name, ri.amount, i.price FROM recipe_ingredient ri " +
             "JOIN ingredient i ON ri.ingredientId = i.id " +
-            "WHERE ri.recipe_id = #{recipeId}")
+            "WHERE ri.recipeId = #{recipeId}")
     List<IngredientDTO> selectByRecipeId(@Param("recipeId") Integer recipeId);
 
 
@@ -79,8 +79,8 @@ public interface RecipeIngredientMapper {
      * 根据 Ingredient ID 查询所有关联的 Recipe
      */
     @Select("SELECT r.id, r.name FROM recipe_ingredient ri " +
-            "JOIN recipe r ON ri.recipe_id = r.id " +
-            "WHERE ri.ingredient_id = #{ingredientId}")
+            "JOIN recipe r ON ri.recipeId = r.id " +
+            "WHERE ri.ingredientId = #{ingredientId}")
     List<Recipe> selectRecipesByIngredientId(@Param("ingredientId") Integer ingredientId);
 }
 

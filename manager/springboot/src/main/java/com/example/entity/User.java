@@ -123,25 +123,4 @@ public class User extends Account implements Serializable {
     }
 
 
-//    public User() {
-//        super();
-//    }
-//    public  User(UserDTO userDTO) {
-//        User user = new User();
-//        user.setUsername(userDTO.getUsername());
-//        user.setPassword(userDTO.getPassword());
-//        user.setName(userDTO.getName());
-//        user.setPhone(userDTO.getPhone());
-//        user.setEmail(userDTO.getEmail());
-//        user.setLocation(userDTO.getLocation());
-//
-//        // 将 mealTimes 转换为 JSON 字符串
-//        try {
-//            String mealTimesJson = Mapper.writeValueAsString(userDTO.getMealTimes());
-//            user.setMealTimes(mealTimesJson);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException("Error converting mealTimes to JSON", e);
-//        }
-//
-//    }
 }

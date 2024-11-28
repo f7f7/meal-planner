@@ -10,12 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * service
@@ -30,11 +28,17 @@ public class RecipeService {
 
     private final ObjectMapper mapper = new ObjectMapper(); // Jackson 的 ObjectMapper
 
+    public RecipeService(IngredientMapper ingredientMapper, RecipeIngredientMapper recipeIngredientMapper) {
+        this.ingredientMapper = ingredientMapper;
+        this.recipeIngredientMapper = recipeIngredientMapper;
+    }
+
 
     public void add(Recipe recipe) {
         recipeMapper.insert(recipe);
     }
 
+    @Transactional
     public void add(RecipeDTO recipeDTO){
         Recipe recipe = convertDtoToRecipe(recipeDTO);
 
@@ -74,23 +78,34 @@ public class RecipeService {
 
     public void updateById(RecipeDTO recipeDTO){
         Recipe recipe = convertDtoToRecipe(recipeDTO);
-
         recipeMapper.updateById(recipe);
+
+        /**
+         * update ingredient
+         * */
         recipeDTO.getIngredients().forEach((ingredientName, amount) -> {
             Ingredient ingredient = ingredientMapper.selectByName(ingredientName);
-
-            //xxx
-            if (ingredient != null) {
+            if (ingredient == null) {
+                ingredient = new Ingredient();
+                ingredient.setName(ingredientName);
+                ingredientMapper.insert(ingredient);
+            } else {
+                // 更新 Ingredient 的名称等信息（例如，如果名称有所变化）
+                ingredient.setName(ingredientName);
                 ingredientMapper.updateById(ingredient);
             }
 
-            recipeIngredientMapper.updateById(recipe.getId(), ingredient.getId(), amount);
+            /**
+             * update recipe_ingredient
+             * */
+            recipeIngredientMapper.updateById(recipeDTO.getId(),ingredient.getId(),amount);
 
         });
     }
 
     /**
-     * 删除recipe和它所包含的所有ingredients
+     * delete by id
+     * both recipe and its ingredients
      * */
     public void deleteById(Integer id) {
         recipeMapper.deleteById(id);
@@ -99,6 +114,7 @@ public class RecipeService {
 
     /**
      * delete by batch
+     * both recipes and their ingredients
      */
     public void deleteBatch(List<Integer> ids) {
         for (Integer id : ids) {
@@ -117,12 +133,25 @@ public class RecipeService {
         return recipeMapper.selectAll(recipe);
     }
 
+    public List<RecipeDTO> selectAll(RecipeDTO recipeDTO) {
+        List<RecipeDTO> recipeDTOList = new ArrayList<>();
+        Recipe recipe = convertDtoToRecipe(recipeDTO);
+        List<Recipe> recipeList = recipeMapper.selectAll(recipe);
+        for (Recipe recipe1 : recipeList) {
+            List<IngredientDTO> ingredientDTOList = selectIngredientDTO(recipe1.getId());
+            RecipeDTO recipeDTO1 = convertRecipeToDto(recipe1, ingredientDTOList);
+            recipeDTOList.add(recipeDTO1);
+        }
+        return recipeDTOList;
+    }
+
     /**
      * paging query
      */
-    public PageInfo<Recipe> selectPage(Recipe recipe, Integer pageNum, Integer pageSize) {
+    public PageInfo<RecipeDTO> selectPage(RecipeDTO recipeDTO, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Recipe> list = recipeMapper.selectAll(recipe);
+//        List<Recipe> list = recipeMapper.selectAll(recipe);
+        List<RecipeDTO> list = selectAll(recipeDTO);
         return PageInfo.of(list);
     }
 
@@ -174,15 +203,17 @@ public class RecipeService {
     public RecipeDTO convertRecipeToDto(Recipe recipe, List<IngredientDTO> ingredientDTOList) {
         RecipeDTO recipeDTO = new RecipeDTO();
 
+        recipeDTO.setId(recipe.getId());
+
         recipeDTO.setName(recipe.getName());
         recipeDTO.setUserId(recipe.getUserId());
         recipeDTO.setAdminId(recipe.getAdminId());
         recipeDTO.setDescription(recipe.getDescription());
 
-        // JSON -> List
+        // JSON -> Map
         // of steps
         try {
-            Map<Integer,String> steps = (Map<Integer, String>) mapper.readValue(recipe.getSteps(), new TypeReference<List<String>>() {});
+            Map<Integer,String> steps = (Map<Integer, String>) mapper.readValue(recipe.getSteps(), new TypeReference<Map<Integer, String>>() {});
             recipeDTO.setSteps(steps);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error converting steps JSON to List", e);

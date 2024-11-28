@@ -30,7 +30,6 @@
         select
             <include refid="Base_Column_List" />
         from ingredient
---         where name = #{name}
         where name like CONCAT('%', #{name}, '%')
 
     </select>
@@ -40,7 +39,7 @@
         where  id = #{id}
     </delete>
 
-    <insert id="insert" parameterType="com.example.entity.Ingredient" useGeneratedKeys="true">
+    <insert id="insert" parameterType="com.example.entity.Ingredient" useGeneratedKeys="true" keyProperty="id">
         insert into ingredient
         <trim prefix="(" suffix=")" suffixOverrides=",">
                 <if test="id != null">id,</if>
