@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.PlanMealMapper">
+
+    <sql id="Base_Column_List">
+        id,planId,recipeId,day,type,portion
+    </sql>
+
+    <select id="selectAll" resultType="com.example.entity.PlanMeal">
+        select
+        <include refid="Base_Column_List" />
+        from plan_meal
+        <where>
+            <if test="id != null"> and id= #{id}</if>
+            <if test="planId != null"> and planId= #{planId}</if>
+            <if test="recipeId != null"> and recipeId= #{recipeId}</if>
+            <if test="day != null"> and day= #{day}</if>
+            <if test="type != null"> and type= #{type}</if>
+            <if test="portion != null"> and portion= #{portion}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.PlanMeal">
+        select
+        <include refid="Base_Column_List" />
+        from plan_meal
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from plan_meal
+        where  id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.PlanMeal" useGeneratedKeys="true">
+        insert into plan_meal
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">id,</if>
+                <if test="planId != null">planId,</if>
+                <if test="recipeId != null">recipeId,</if>
+                <if test="day != null">day,</if>
+                <if test="type != null">type,</if>
+                <if test="portion != null">portion,</if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">#{id},</if>
+                <if test="planId != null">#{planId},</if>
+                <if test="recipeId != null">#{recipeId},</if>
+                <if test="day != null">#{day},</if>
+                <if test="type != null">#{type},</if>
+                <if test="portion != null">#{portion},</if>
+        </trim>
+    </insert>
+
+    <!--    id,planId,recipeId,day,type,portion-->
+    <update id="updateById" parameterType="com.example.entity.PlanMeal">
+        update plan_meal
+        <set>
+            <if test="planId != null">
+                planId = #{planId},
+            </if>
+            <if test="recipeId != null">
+                recipeId = #{recipeId},
+            </if>
+            <if test="day != null">
+                day = #{day},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="portion != null">
+                portion = #{portion},
+            </if>
+        </set>
+        where id = #{id} 
+    </update>
+
+</mapper>

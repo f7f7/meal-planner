@@ -166,6 +166,7 @@ public class RecipeService {
  * */
     public Recipe convertDtoToRecipe(RecipeDTO recipeDTO) {
         Recipe recipe = new Recipe();
+        recipe.setId(recipeDTO.getId());
         recipe.setName(recipeDTO.getName());
         recipe.setUserId(recipeDTO.getUserId());
         recipe.setAdminId(recipeDTO.getAdminId());

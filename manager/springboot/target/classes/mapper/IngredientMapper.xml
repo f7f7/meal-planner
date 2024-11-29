@@ -30,7 +30,7 @@
         select
             <include refid="Base_Column_List" />
         from ingredient
-        where name like CONCAT('%', #{name}, '%')
+        where name = #{name}
 
     </select>
 
