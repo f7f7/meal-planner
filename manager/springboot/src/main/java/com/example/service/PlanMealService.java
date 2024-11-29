@@ -58,6 +58,11 @@ public class PlanMealService {
         return planMealMapper.selectAll(planMeal);
     }
 
+    public List<PlanMeal> selectByPlanId(Integer planId) {
+        return planMealMapper.selectByPlanId(planId);
+    }
+
+
     /**
      * paging query
      */

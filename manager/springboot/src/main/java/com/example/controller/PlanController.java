@@ -1,12 +1,16 @@
 package com.example.controller;
 
 import com.example.common.Result;
+import com.example.entity.MealDTO;
 import com.example.entity.Plan;
+import com.example.entity.PlanMeal;
+import com.example.service.PlanMealService;
 import com.example.service.PlanService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +22,11 @@ public class PlanController {
 
     @Resource
     private PlanService planService;
+    private PlanMealService planMealService;
+
+    public PlanController(PlanMealService planMealService) {
+        this.planMealService = planMealService;
+    }
 
     /**
      * 新增
@@ -72,6 +81,25 @@ public class PlanController {
         List<Plan> list = planService.selectAll(plan);
         return Result.success(list);
     }
+
+    /**
+     * select plan(recipe included) by week start date
+     * */
+    @GetMapping("/selectByWeekStartDate")
+    public Result selectByWeekStartDate(@RequestParam String weekStartDate) {
+        List<Plan> weeklyPlans = planService.selectByWeekStartDate(weekStartDate);
+        List<MealDTO> mealDTOList = new ArrayList<>();
+
+        for (Plan plan : weeklyPlans) {
+            List<PlanMeal> planMeals = planMealService.selectByPlanId(plan.getId());
+            for (PlanMeal meal : planMeals) {
+                mealDTOList.add(planMealService.convertMealToDTO(meal));
+            }
+        }
+
+        return Result.success(mealDTOList);
+    }
+
 
     /**
      * 分页查询

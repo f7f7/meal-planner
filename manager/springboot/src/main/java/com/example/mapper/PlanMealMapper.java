@@ -2,6 +2,8 @@ package com.example.mapper;
 
 import com.example.entity.PlanMeal;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -21,6 +23,10 @@ public interface PlanMealMapper {
     int updateById(PlanMeal planMeal);
 
     PlanMeal selectById(Integer id);
+
+    @Select("SELECT * FROM plan_meal WHERE planId = #{planId}")
+    List<PlanMeal> selectByPlanId(@Param("planId") Integer planId);
+
 
     List<PlanMeal> selectAll(PlanMeal planMeal);
 

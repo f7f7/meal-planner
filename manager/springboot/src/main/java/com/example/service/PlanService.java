@@ -60,6 +60,11 @@ public class PlanService {
         return planMapper.selectAll(plan);
     }
 
+    public List<Plan> selectByWeekStartDate(String weekStartDate) {
+        return planMapper.selectByDate(weekStartDate);
+    }
+
+
     /**
      * paging query
      */
